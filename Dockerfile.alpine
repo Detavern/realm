@@ -1,6 +1,9 @@
 FROM alpine:latest
 
 COPY target/x86_64-unknown-linux-musl/release/realm /usr/bin
+COPY entrypoint.sh /usr/bin
+
 RUN chmod +x /usr/bin/realm
 
-ENTRYPOINT ["/usr/bin/realm"]
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["realm"]
