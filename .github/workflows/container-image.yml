@@ -74,13 +74,19 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: lower-repo
+        name: Repository to lowercase
+        run: |
+          echo "repository=${GITHUB_REPOSITORY@L}" >> $GITHUB_OUTPUT
+
       - name: Build and push images with latest(debian)
         uses: docker/build-push-action@v6
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest, ghcr.io/${{ github.repository }}:${{ github.event.inputs.tag || env.RELEASE_VERSION }}
+          tags: ghcr.io/${{ steps.lower-repo.outputs.repository }}:latest, ghcr.io/${{ steps.lower-repo.outputs.repository }}:${{ github.event.inputs.tag || env.RELEASE_VERSION }}
           
       - name: Build and push images with alpine
         uses: docker/build-push-action@v6
@@ -88,5 +94,5 @@ jobs:
           context: .
           file: ./Dockerfile.alpine
           push: true
-          tags: ghcr.io/${{ github.repository }}:alpine, ghcr.io/${{ github.repository }}:${{ github.event.inputs.tag || env.RELEASE_VERSION }}-alpine
+          tags: ghcr.io/${{ steps.lower-repo.outputs.repository }}:alpine, ghcr.io/${{ steps.lower-repo.outputs.repository }}:${{ github.event.inputs.tag || env.RELEASE_VERSION }}-alpine
           
